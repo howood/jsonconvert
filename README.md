@@ -7,3 +7,11 @@
 [license]: https://github.com/howood/jsonconvert/blob/master/LICENSE
 
 # jsonconvert
+
+Convert JSOn input to Different format.
+
+# Install
+
+```
+$ go get -u github.com/howood/jsonconvert
+```
