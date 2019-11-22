@@ -1,5 +1,11 @@
 package jsonconvert
 
+const (
+	RESPONSE_SETTING   = "setting"
+	RESPONSE_INPUT     = "input"
+	RESPONSE_CHECKDATA = "checkdata"
+)
+
 var responseTestData = map[string]map[string]string{
 	"test1": map[string]string{
 		RESPONSE_SETTING: `
