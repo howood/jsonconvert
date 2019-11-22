@@ -8,7 +8,7 @@
 
 # jsonconvert
 
-Convert JSOn input to Different format.
+Convert JSON input to Different format.
 
 # Install
 
