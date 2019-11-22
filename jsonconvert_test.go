@@ -5,12 +5,6 @@ import (
 	"testing"
 )
 
-const (
-	RESPONSE_SETTING   = "setting"
-	RESPONSE_INPUT     = "input"
-	RESPONSE_CHECKDATA = "checkdata"
-)
-
 func Test_JsonConvertTest1(t *testing.T) {
 	jc := NewJsonConverter()
 	for k, v := range responseTestData {
