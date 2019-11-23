@@ -7,9 +7,11 @@ import (
 )
 
 type jsonData struct {
+	// Data is JSON Data
 	Data interface{}
 }
 
+// newJsonData create jsonData pointer from []byte / string / interface{}
 func newJSONData(inputdata interface{}) (*jsonData, error) {
 	var data = new(interface{})
 	switch converteddata := inputdata.(type) {
@@ -30,11 +32,12 @@ func newJSONData(inputdata interface{}) (*jsonData, error) {
 	}
 }
 
-func (jd *jsonData) query(exp string) (interface{}, error) {
-	if exp == "." {
+// query is extract data from JSON with item key
+func (jd *jsonData) query(key string) (interface{}, error) {
+	if key == "." {
 		return jd.Data, nil
 	}
-	paths := strings.Split(exp, ".")
+	paths := strings.Split(key, ".")
 	var context interface{} = jd.Data
 	for _, path := range paths {
 		if len(path) >= 3 && strings.HasPrefix(path, "[") && strings.HasSuffix(path, "]") {
@@ -43,47 +46,28 @@ func (jd *jsonData) query(exp string) (interface{}, error) {
 			if err != nil {
 				return nil, err
 			}
-			if v, ok := context.([]interface{}); ok {
+			switch v := context.(type) {
+			case []interface{}:
 				if len(v) <= index {
 					return nil, fmt.Errorf("%s: index out of range", path)
 				}
 				context = v[index]
-			} else {
-				return nil, fmt.Errorf("%s is not an array. %v", path, v)
+			default:
+				return nil, fmt.Errorf("%s: not array. %v", path, v)
 			}
 		} else {
 			// map
-			if v, ok := context.(map[string]interface{}); ok {
+			switch v := context.(type) {
+			case map[string]interface{}:
 				if val, ok := v[path]; ok {
 					context = val
 				} else {
-					return nil, fmt.Errorf("%s does not exist", path)
+					return nil, fmt.Errorf("%s: not exist", path)
 				}
-			} else {
-				return nil, fmt.Errorf("%s is not an object. %v", path, v)
+			default:
+				return nil, fmt.Errorf("%s: not object. %v", path, v)
 			}
 		}
 	}
-	switch converteddata := context.(type) {
-	case map[string]interface{}:
-		return converteddata, nil
-	case []interface{}:
-		return converteddata, nil
-	case string:
-		return converteddata, nil
-	case int:
-		return converteddata, nil
-	case int32:
-		return converteddata, nil
-	case int64:
-		return converteddata, nil
-	case float32:
-		return converteddata, nil
-	case float64:
-		return converteddata, nil
-	case bool:
-		return converteddata, nil
-	default:
-		return converteddata, nil
-	}
+	return context, nil
 }

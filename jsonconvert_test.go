@@ -6,7 +6,7 @@ import (
 )
 
 func Test_JsonConvertTest1(t *testing.T) {
-	jc := NewJsonConverter()
+	jc := NewJSONConvert()
 	for k, v := range responseTestData {
 		jc.SetResponse(k, v[RESPONSE_SETTING])
 	}
