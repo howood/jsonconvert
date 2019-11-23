@@ -34,9 +34,9 @@ func NewJSONConvert() *JSONConvert {
 	}
 }
 
-// SetResponse is set convert list settings
-func (jc JSONConvert) SetResponse(identifier, responseJSON string) {
-	jc.convertList[identifier] = responseJSON
+// SetResponseSetting is set convert list response settings
+func (jc JSONConvert) SetResponseSetting(identifier, responseJSONSetting string) {
+	jc.convertList[identifier] = responseJSONSetting
 }
 
 // Convert is convert JSON data to other format
