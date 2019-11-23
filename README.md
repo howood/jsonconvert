@@ -15,3 +15,7 @@ Convert JSON input to Different format.
 ```
 $ go get -u github.com/howood/jsonconvert
 ```
+
+# Usage
+
+See [example](example/)
