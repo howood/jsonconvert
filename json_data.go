@@ -11,7 +11,7 @@ type jsonData struct {
 	Data interface{}
 }
 
-// newJSONData create jsonData pointer from []byte / string / interface{}
+// newJsonData create jsonData pointer from []byte / string / interface{}
 func newJSONData(inputdata interface{}) (*jsonData, error) {
 	var data = new(interface{})
 	switch converteddata := inputdata.(type) {
