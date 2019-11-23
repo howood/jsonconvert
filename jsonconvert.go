@@ -4,8 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-
-	"log"
 )
 
 const (
@@ -144,7 +142,7 @@ func (jc JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *json
 				return nil, err
 			}
 			if joindataset, err = jc.getRecordsetWithQueryKey(JOINRECORDSETKEY, convertdataonedata, jsondata); err != nil {
-				log.Print(err)
+				//log.Print(err)
 			}
 			if len(joindataset) > 0 {
 				var ok bool
@@ -169,7 +167,7 @@ func (jc JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *json
 							querykey := strings.Replace(data, JSONCONVERTKEY, "", 1)
 							jsonval, err := datarecordparser.query(querykey)
 							if err != nil {
-								log.Print(err)
+								//log.Print(err)
 							}
 							resultjsonmap[key] = jsonval
 							if querykey == joincolumn {
@@ -213,30 +211,29 @@ func (jc JSONConvert) getNTimeArrayData(querykey string, jsondata *jsonData) (in
 	} else {
 		splitquerylist = strings.Split(querykey, fmt.Sprintf("%s%s%s", JSONSPLITKEY, JSONNTIMESKEY, JSONSPLITKEY))
 	}
-	if jsonarray, err := jsondata.query(splitquerylist[0]); err != nil {
-		log.Print(err)
+	jsonarray, err := jsondata.query(splitquerylist[0])
+	if err != nil {
 		return nil, err
-	} else {
-		datalist := make([]interface{}, 0)
-		switch jsonarraydata := jsonarray.(type) {
-		case map[string]interface{}:
-			if valone, ok := jsonarraydata[splitquerylist[1]]; ok {
-				return valone, nil
-			}
-		case []interface{}:
-			for _, jsonarrayval := range jsonarraydata {
-				arrayjsonparser, err := newJSONData(jsonarrayval)
-				if err != nil {
-					return nil, err
-				}
-				jsonval, err := arrayjsonparser.query(splitquerylist[1])
-				if err != nil {
-					return nil, err
-				}
-				datalist = append(datalist, jsonval)
-			}
-			return datalist, nil
+	}
+	datalist := make([]interface{}, 0)
+	switch jsonarraydata := jsonarray.(type) {
+	case map[string]interface{}:
+		if valone, ok := jsonarraydata[splitquerylist[1]]; ok {
+			return valone, nil
 		}
+	case []interface{}:
+		for _, jsonarrayval := range jsonarraydata {
+			arrayjsonparser, err := newJSONData(jsonarrayval)
+			if err != nil {
+				return nil, err
+			}
+			jsonval, err := arrayjsonparser.query(splitquerylist[1])
+			if err != nil {
+				return nil, err
+			}
+			datalist = append(datalist, jsonval)
+		}
+		return datalist, nil
 	}
 	return nil, errors.New("No Convert")
 }
@@ -246,7 +243,6 @@ func (jc JSONConvert) getRecordsetWithQueryKey(querykey string, convertdata map[
 	if datasetquerykey, ok := convertdata[querykey].(string); ok {
 		jsonval, err := jsonparser.query(datasetquerykey)
 		if err != nil {
-			log.Print(err)
 			return nil, err
 		}
 		switch jsonvaldata := jsonval.(type) {
