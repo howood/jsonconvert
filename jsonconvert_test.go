@@ -8,7 +8,7 @@ import (
 func Test_JsonConvertTest1(t *testing.T) {
 	jc := NewJSONConvert()
 	for k, v := range responseTestData {
-		jc.SetResponse(k, v["setting"])
+		jc.SetResponseSetting(k, v["setting"])
 	}
 	for k, v := range responseTestData {
 		resultbyte, err := jc.Convert([]byte(v["input"]), k)

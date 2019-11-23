@@ -308,7 +308,7 @@ var responseTestData = map[string]map[string]string{
 func main() {
 	jc := jsonconvert.NewJSONConvert()
 	for k, v := range responseTestData {
-		jc.SetResponse(k, v[RESPONSE_SETTING])
+		jc.SetResponseSetting(k, v[RESPONSE_SETTING])
 	}
 	for k, v := range responseTestData {
 		resultbyte, err := jc.Convert([]byte(v[RESPONSE_INPUT]), k)
