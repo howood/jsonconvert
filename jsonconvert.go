@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	iJd "github.com/howood/jsonconvert/internal/jsondata"
-	iPs "github.com/howood/jsonconvert/internal/parser"
+	iP "github.com/howood/jsonconvert/internal/parser"
 )
 
 const (
@@ -49,7 +49,7 @@ func (jc JSONConvert) Convert(inputdata []byte, identifier string) ([]byte, erro
 
 // convertData is convert input data
 func (jc JSONConvert) convertData(convertdata string, inputdata []byte) ([]byte, error) {
-	convertdatajson, err := iPs.ByteToJson([]byte(convertdata))
+	convertdatajson, err := iP.ByteToJson([]byte(convertdata))
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func (jc JSONConvert) convertData(convertdata string, inputdata []byte) ([]byte,
 	if err != nil {
 		return inputdata, err
 	}
-	return iPs.JsonToByte(resultjson)
+	return iP.JsonToByte(resultjson)
 }
 
 // convertJSONData is convert using jsondata.JSONData
@@ -218,13 +218,13 @@ func (jc JSONConvert) getNTimeArrayData(querykey string, jsondata *iJd.JSONData)
 	if err != nil {
 		return nil, err
 	}
-	datalist := make([]interface{}, 0)
 	switch jsonarraydata := jsonarray.(type) {
 	case map[string]interface{}:
 		if valone, ok := jsonarraydata[splitquerylist[1]]; ok {
 			return valone, nil
 		}
 	case []interface{}:
+		datalist := make([]interface{}, 0)
 		for _, jsonarrayval := range jsonarraydata {
 			arrayjsonparser, err := iJd.NewJSONData(jsonarrayval)
 			if err != nil {
