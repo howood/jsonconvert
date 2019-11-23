@@ -1,4 +1,4 @@
-package jsonconvert
+package parser
 
 import "encoding/json"
 
@@ -10,18 +10,18 @@ const (
 )
 
 // jsonToByte is convert json struct to bytes
-func jsonToByte(jsondata interface{}) ([]byte, error) {
+func JsonToByte(jsondata interface{}) ([]byte, error) {
 	return json.MarshalIndent(jsondata, MARSHAL_PREFIX, MARSHAL_INDENT)
 }
 
 // byteToJson is convert bytes to json interface{}
-func byteToJson(jsonbyte []byte) (interface{}, error) {
+func ByteToJson(jsonbyte []byte) (interface{}, error) {
 	var jsondata interface{}
 	err := json.Unmarshal(jsonbyte, &jsondata)
 	return jsondata, err
 }
 
 // byteToJson is convert bytes to struct
-func byteToJsonStruct(jsonbyte []byte, jsonobj interface{}) error {
+func ByteToJsonStruct(jsonbyte []byte, jsonobj interface{}) error {
 	return json.Unmarshal(jsonbyte, &jsonobj)
 }

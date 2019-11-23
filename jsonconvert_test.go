@@ -1,6 +1,7 @@
 package jsonconvert
 
 import (
+	"github.com/howood/jsonconvert/internal/parser"
 	"reflect"
 	"testing"
 )
@@ -31,10 +32,10 @@ func checkEqualJsonByte(input1, input2 []byte, t *testing.T) bool {
 	var json1 interface{}
 	var json2 interface{}
 
-	if err := byteToJsonStruct(input1, &json1); err != nil {
+	if err := parser.ByteToJsonStruct(input1, &json1); err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
-	if err := byteToJsonStruct(input2, &json2); err != nil {
+	if err := parser.ByteToJsonStruct(input2, &json2); err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
 	return reflect.DeepEqual(json1, json2)
