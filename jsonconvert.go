@@ -19,92 +19,98 @@ const (
 	RECORDSETKEY = "$$recordset"
 	// JOINRECORDSETKEY is join recotrdset key
 	JOINRECORDSETKEY = "$$joinrecordset"
-	// JOINRECORDCOLUMNKEY is join column key
+	// JOINRECORDCOLUMNKEY is join column link key
 	JOINRECORDCOLUMNKEY = "$$joinrecordcolumn"
 )
 
-type JsonConverter struct {
+// JSONConvert represents JSON convert entity
+type JSONConvert struct {
+	// convertList is convert list settings
 	convertList map[string]string
 }
 
-func NewJsonConverter() *JsonConverter {
-	return &JsonConverter{
+// NewJSONConvert create JSONConvert pointer
+func NewJSONConvert() *JSONConvert {
+	return &JSONConvert{
 		convertList: make(map[string]string, 0),
 	}
 }
 
-func (jc JsonConverter) SetResponse(identifier, responseJson string) {
-	jc.convertList[identifier] = responseJson
+// SetResponse is set convert list settings
+func (jc JSONConvert) SetResponse(identifier, responseJSON string) {
+	jc.convertList[identifier] = responseJSON
 }
 
-func (jc JsonConverter) Convert(responsedata []byte, identifier string) ([]byte, error) {
-	return jc.convertResponseToJson(jc.convertList[identifier], responsedata)
+// Convert is convert JSON data to other format
+func (jc JSONConvert) Convert(inputdata []byte, identifier string) ([]byte, error) {
+	return jc.convertData(jc.convertList[identifier], inputdata)
 }
 
-func (jc JsonConverter) convertResponseToJson(convertdata string, responsedata []byte) ([]byte, error) {
+// convertData is convert input data
+func (jc JSONConvert) convertData(convertdata string, inputdata []byte) ([]byte, error) {
 	convertdatajson, err := byteToJson([]byte(convertdata))
 	if err != nil {
 		return nil, err
 	}
-	jsondata, err := newJSONData(responsedata)
+	jsondata, err := newJSONData(inputdata)
 	if err != nil {
 		return nil, err
 	}
-	resultjson, err := jc.convertJsonDataFromResponse(convertdatajson, jsondata)
+	resultjson, err := jc.convertJSONData(convertdatajson, jsondata)
 	if err != nil {
-		return responsedata, err
+		return inputdata, err
 	}
 	return jsonToByte(resultjson)
 }
 
-func (jc JsonConverter) convertJsonDataFromResponse(convert interface{}, jsondata *jsonData) (interface{}, error) {
+// convertJSONData is convert using jsonData
+func (jc JSONConvert) convertJSONData(convert interface{}, jsondata *jsonData) (interface{}, error) {
 	switch convertdata := convert.(type) {
 	case map[string]interface{}:
 		for key, val := range convertdata {
-			if result, err := jc.convertJsonDataFromResponse(val, jsondata); err != nil {
+			result, err := jc.convertJSONData(val, jsondata)
+			if err != nil {
 				return nil, err
-			} else {
-				convertdata[key] = result
 			}
+			convertdata[key] = result
 		}
 		return convertdata, nil
 	case []interface{}:
-		if jc.isRecordsetConvertData(convertdata) {
+		if jc.isRecordset(convertdata) {
 			return jc.getRecordsetData(convertdata, jsondata)
-		} else {
-			resultdata := make([]interface{}, 0)
-			for _, dataone := range convertdata {
-				result, err := jc.convertJsonDataFromResponse(dataone, jsondata)
-				if err != nil {
-					return nil, err
-				}
-				switch data := result.(type) {
-				case []interface{}:
-					resultdata = append(resultdata, data...)
-				default:
-					resultdata = append(resultdata, data)
-				}
-			}
-			return resultdata, nil
 		}
+		resultdata := make([]interface{}, 0)
+		for _, dataone := range convertdata {
+			result, err := jc.convertJSONData(dataone, jsondata)
+			if err != nil {
+				return nil, err
+			}
+			switch data := result.(type) {
+			case []interface{}:
+				resultdata = append(resultdata, data...)
+			default:
+				resultdata = append(resultdata, data)
+			}
+		}
+		return resultdata, nil
 	case string:
 		if strings.HasPrefix(convertdata, JSONCONVERTKEY) == true {
 			querykey := strings.Replace(convertdata, JSONCONVERTKEY, "", 1)
-			if jc.isNTimeArrayConvertData(querykey) == true {
+			if jc.isNTimeArray(querykey) == true {
 				return jc.getNTimeArrayData(querykey, jsondata)
-			} else {
-				if jsonval, err := jsondata.query(querykey); err != nil {
-					return "", err
-				} else {
-					return jsonval, nil
-				}
 			}
+			jsonval, err := jsondata.query(querykey)
+			if err != nil {
+				return "", err
+			}
+			return jsonval, nil
 		}
 	}
 	return convert, nil
 }
 
-func (jc JsonConverter) isRecordsetConvertData(convertdata []interface{}) bool {
+// isRecordset is check Recordset data or not
+func (jc JSONConvert) isRecordset(convertdata []interface{}) bool {
 	for _, convertdataone := range convertdata {
 		switch convertdataonedata := convertdataone.(type) {
 		case map[string]interface{}:
@@ -116,14 +122,16 @@ func (jc JsonConverter) isRecordsetConvertData(convertdata []interface{}) bool {
 	return false
 }
 
-func (jc JsonConverter) isNTimeArrayConvertData(querykey string) bool {
+// isNTimeArray is check NTimeArray data or not
+func (jc JSONConvert) isNTimeArray(querykey string) bool {
 	if strings.Contains(querykey, JSONNTIMESKEY) == true {
 		return true
 	}
 	return false
 }
 
-func (jc JsonConverter) getRecordsetData(convertdata []interface{}, jsondata *jsonData) (interface{}, error) {
+// getRecordsetData get Recordset data
+func (jc JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *jsonData) (interface{}, error) {
 	resultdata := make([]interface{}, 0)
 	dataset := make([]interface{}, 0)
 	joindataset := make([]interface{}, 0)
@@ -132,10 +140,10 @@ func (jc JsonConverter) getRecordsetData(convertdata []interface{}, jsondata *js
 		var err error
 		switch convertdataonedata := convertdataone.(type) {
 		case map[string]interface{}:
-			if dataset, err = jc.getRecordset(RECORDSETKEY, convertdataonedata, jsondata); err != nil {
+			if dataset, err = jc.getRecordsetWithQueryKey(RECORDSETKEY, convertdataonedata, jsondata); err != nil {
 				return nil, err
 			}
-			if joindataset, err = jc.getRecordset(JOINRECORDSETKEY, convertdataonedata, jsondata); err != nil {
+			if joindataset, err = jc.getRecordsetWithQueryKey(JOINRECORDSETKEY, convertdataonedata, jsondata); err != nil {
 				log.Print(err)
 			}
 			if len(joindataset) > 0 {
@@ -159,13 +167,13 @@ func (jc JsonConverter) getRecordsetData(convertdata []interface{}, jsondata *js
 					case string:
 						if data != JOINRECORDSETKEY && strings.HasPrefix(data, JSONCONVERTKEY) == true {
 							querykey := strings.Replace(data, JSONCONVERTKEY, "", 1)
-							if jsonval, err := datarecordparser.query(querykey); err != nil {
+							jsonval, err := datarecordparser.query(querykey)
+							if err != nil {
 								log.Print(err)
-							} else {
-								resultjsonmap[key] = jsonval
-								if querykey == joincolumn {
-									joincolumnvalue = jsonval
-								}
+							}
+							resultjsonmap[key] = jsonval
+							if querykey == joincolumn {
+								joincolumnvalue = jsonval
 							}
 						}
 					case map[string]interface{}:
@@ -173,7 +181,7 @@ func (jc JsonConverter) getRecordsetData(convertdata []interface{}, jsondata *js
 						if err != nil {
 							return nil, err
 						}
-						resultjsonmap[key], err = jc.convertJsonDataFromResponse(data, datarecordparser)
+						resultjsonmap[key], err = jc.convertJSONData(data, datarecordparser)
 						if err != nil {
 							return nil, err
 						}
@@ -196,16 +204,15 @@ func (jc JsonConverter) getRecordsetData(convertdata []interface{}, jsondata *js
 	return resultdata, nil
 }
 
-func (jc JsonConverter) getNTimeArrayData(querykey string, jsondata *jsonData) (interface{}, error) {
+// getNTimeArrayData get NTimeArray data
+func (jc JSONConvert) getNTimeArrayData(querykey string, jsondata *jsonData) (interface{}, error) {
 	splitquerylist := make([]string, 0)
-	log.Print(querykey)
 	if strings.HasPrefix(querykey, JSONNTIMESKEY) == true {
 		splitquerylist = strings.Split(querykey, fmt.Sprintf("%s%s", JSONNTIMESKEY, JSONSPLITKEY))
 		splitquerylist[0] = JSONSPLITKEY
 	} else {
 		splitquerylist = strings.Split(querykey, fmt.Sprintf("%s%s%s", JSONSPLITKEY, JSONNTIMESKEY, JSONSPLITKEY))
 	}
-	log.Print(splitquerylist)
 	if jsonarray, err := jsondata.query(splitquerylist[0]); err != nil {
 		log.Print(err)
 		return nil, err
@@ -222,11 +229,11 @@ func (jc JsonConverter) getNTimeArrayData(querykey string, jsondata *jsonData) (
 				if err != nil {
 					return nil, err
 				}
-				if jsonval, err := arrayjsonparser.query(splitquerylist[1]); err != nil {
+				jsonval, err := arrayjsonparser.query(splitquerylist[1])
+				if err != nil {
 					return nil, err
-				} else {
-					datalist = append(datalist, jsonval)
 				}
+				datalist = append(datalist, jsonval)
 			}
 			return datalist, nil
 		}
@@ -234,24 +241,26 @@ func (jc JsonConverter) getNTimeArrayData(querykey string, jsondata *jsonData) (
 	return nil, errors.New("No Convert")
 }
 
-func (jc JsonConverter) getRecordset(querykey string, convertdata map[string]interface{}, jsonparser *jsonData) ([]interface{}, error) {
+// getRecordsetWithQueryKey get Recordset with query key
+func (jc JSONConvert) getRecordsetWithQueryKey(querykey string, convertdata map[string]interface{}, jsonparser *jsonData) ([]interface{}, error) {
 	if datasetquerykey, ok := convertdata[querykey].(string); ok {
-		if jsonval, err := jsonparser.query(datasetquerykey); err != nil {
+		jsonval, err := jsonparser.query(datasetquerykey)
+		if err != nil {
 			log.Print(err)
 			return nil, err
-		} else {
-			switch jsonvaldata := jsonval.(type) {
-			case []interface{}:
-				return jsonvaldata, nil
-			case interface{}:
-				return []interface{}{jsonvaldata}, nil
-			}
+		}
+		switch jsonvaldata := jsonval.(type) {
+		case []interface{}:
+			return jsonvaldata, nil
+		case interface{}:
+			return []interface{}{jsonvaldata}, nil
 		}
 	}
 	return nil, fmt.Errorf("No RecordSet %s", querykey)
 }
 
-func (jc JsonConverter) getDataFromJoinRecordset(joincolumn string, joincolumnvalue interface{}, joindata []interface{}) interface{} {
+// getDataFromJoinRecordset get data from JoinRecordset
+func (jc JSONConvert) getDataFromJoinRecordset(joincolumn string, joincolumnvalue interface{}, joindata []interface{}) interface{} {
 	for _, joindataone := range joindata {
 		switch joindataonedata := joindataone.(type) {
 		case map[string]interface{}:
