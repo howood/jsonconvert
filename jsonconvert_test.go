@@ -8,16 +8,16 @@ import (
 func Test_JsonConvertTest1(t *testing.T) {
 	jc := NewJSONConvert()
 	for k, v := range responseTestData {
-		jc.SetResponse(k, v[RESPONSE_SETTING])
+		jc.SetResponse(k, v["setting"])
 	}
 	for k, v := range responseTestData {
-		resultbyte, err := jc.Convert([]byte(v[RESPONSE_INPUT]), k)
+		resultbyte, err := jc.Convert([]byte(v["input"]), k)
 		if err != nil {
 			t.Fatalf("failed test :%s %#v", k, err)
 		}
-		if checkEqualJsonByte(resultbyte, []byte(v[RESPONSE_CHECKDATA]), t) == false {
+		if checkEqualJsonByte(resultbyte, []byte(v["checkdata"]), t) == false {
 			t.Log(string(resultbyte))
-			t.Log(v[RESPONSE_CHECKDATA])
+			t.Log(v["checkdata"])
 			t.Fatalf("failed JsonConvert :%s", k)
 		}
 		t.Logf("success : %s", k)

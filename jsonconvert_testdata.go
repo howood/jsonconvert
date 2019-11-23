@@ -1,14 +1,8 @@
 package jsonconvert
 
-const (
-	RESPONSE_SETTING   = "setting"
-	RESPONSE_INPUT     = "input"
-	RESPONSE_CHECKDATA = "checkdata"
-)
-
 var responseTestData = map[string]map[string]string{
 	"test1": map[string]string{
-		RESPONSE_SETTING: `
+		"setting": `
 {
 	"GlossEntry": "$$glossary.GlossDiv.GlossList.GlossEntry",
 	"GlossSeeAlso": "$$glossary.GlossDiv.GlossList.GlossEntry.GlossDef.GlossSeeAlso",
@@ -17,7 +11,7 @@ var responseTestData = map[string]map[string]string{
 	 "key": "value"
   }
 `,
-		RESPONSE_INPUT: `
+		"input": `
 {
 	"glossary": {
 		"title": "example glossary",
@@ -41,7 +35,7 @@ var responseTestData = map[string]map[string]string{
 	}
 }`,
 
-		RESPONSE_CHECKDATA: `
+		"checkdata": `
 {
 	"GlossEntry": {
 		"ID": "SGML",
@@ -66,14 +60,14 @@ var responseTestData = map[string]map[string]string{
 `,
 	},
 	"test2": map[string]string{
-		RESPONSE_SETTING: `
+		"setting": `
 {
 	"billToaddress": ["$$[$$n].billTo.address"],
 	"sku": ["$$[$$n].sku"],
 	"key": "value"
 }
 `,
-		RESPONSE_INPUT: `
+		"input": `
 [
 	{
 		"billTo": {
@@ -134,7 +128,7 @@ var responseTestData = map[string]map[string]string{
 	}
 ]
 `,
-		RESPONSE_CHECKDATA: `
+		"checkdata": `
 {
 	"billToaddress": [
 		"456 Oak Lanewwwww",
@@ -151,7 +145,7 @@ var responseTestData = map[string]map[string]string{
 `,
 	},
 	"test3": map[string]string{
-		RESPONSE_SETTING: `
+		"setting": `
 [
 	{
 		"$$recordset": "userdata",
@@ -167,7 +161,7 @@ var responseTestData = map[string]map[string]string{
 	}
 ]
 `,
-		RESPONSE_INPUT: `
+		"input": `
 {
 	"userdata":
 	[
@@ -213,7 +207,7 @@ var responseTestData = map[string]map[string]string{
 	]
 }
 `,
-		RESPONSE_CHECKDATA: `
+		"checkdata": `
 [
 	{
 		"address": {
@@ -258,7 +252,7 @@ var responseTestData = map[string]map[string]string{
 `,
 	},
 	"test4": map[string]string{
-		RESPONSE_SETTING: `
+		"setting": `
 {
 	"user": [
 		{
@@ -276,7 +270,7 @@ var responseTestData = map[string]map[string]string{
 	]
 }
 `,
-		RESPONSE_INPUT: `
+		"input": `
 {
 	"userdata":
 	[
@@ -322,7 +316,7 @@ var responseTestData = map[string]map[string]string{
 	]
 }
 `,
-		RESPONSE_CHECKDATA: `
+		"checkdata": `
 {
 	"user": [
 		{
@@ -369,7 +363,7 @@ var responseTestData = map[string]map[string]string{
 `,
 	},
 	"test5": map[string]string{
-		RESPONSE_SETTING: `
+		"setting": `
 [
 	{
 		"$$recordset": "userdata",
@@ -378,7 +372,7 @@ var responseTestData = map[string]map[string]string{
 	}
 ]
 `,
-		RESPONSE_INPUT: `
+		"input": `
 {
 	"userdata":
 	[
@@ -424,7 +418,7 @@ var responseTestData = map[string]map[string]string{
 	]
 }
 `,
-		RESPONSE_CHECKDATA: `
+		"checkdata": `
 [
 	{
 		"name": "aaa",

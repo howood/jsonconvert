@@ -7,9 +7,8 @@ import (
 )
 
 const (
-	RESPONSE_SETTING   = "setting"
-	RESPONSE_INPUT     = "input"
-	RESPONSE_CHECKDATA = "checkdata"
+	RESPONSE_SETTING = "setting"
+	RESPONSE_INPUT   = "input"
 )
 
 var responseTestData = map[string]map[string]string{
