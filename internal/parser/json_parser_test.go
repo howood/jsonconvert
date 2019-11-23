@@ -1,4 +1,4 @@
-package jsonconvert
+package parser
 
 import (
 	"reflect"
@@ -10,13 +10,13 @@ func Test_JsonToByte_ByteToJson(t *testing.T) {
 		"message1": "ok",
 		"message2": "ng",
 	}
-	result, err := jsonToByte(inputdata1)
+	result, err := JsonToByte(inputdata1)
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
 	t.Log("success JsonToByte")
 	t.Log(string(result))
-	resultmap, err := byteToJson(result)
+	resultmap, err := ByteToJson(result)
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
@@ -29,13 +29,13 @@ func Test_JsonToByte_ByteToJson(t *testing.T) {
 
 func Test_JsonToByte_ByteToJson2(t *testing.T) {
 	var inputdata1 map[string]interface{}
-	result, err := jsonToByte(inputdata1)
+	result, err := JsonToByte(inputdata1)
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
 	t.Log("success JsonToByte")
 	t.Log(string(result))
-	resultmap, err := byteToJson(result)
+	resultmap, err := ByteToJson(result)
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}

@@ -4,6 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
+	iJd "github.com/howood/jsonconvert/internal/jsondata"
+	iPs "github.com/howood/jsonconvert/internal/parser"
 )
 
 const (
@@ -46,11 +49,11 @@ func (jc JSONConvert) Convert(inputdata []byte, identifier string) ([]byte, erro
 
 // convertData is convert input data
 func (jc JSONConvert) convertData(convertdata string, inputdata []byte) ([]byte, error) {
-	convertdatajson, err := byteToJson([]byte(convertdata))
+	convertdatajson, err := iPs.ByteToJson([]byte(convertdata))
 	if err != nil {
 		return nil, err
 	}
-	jsondata, err := newJSONData(inputdata)
+	jsondata, err := iJd.NewJSONData(inputdata)
 	if err != nil {
 		return nil, err
 	}
@@ -58,11 +61,11 @@ func (jc JSONConvert) convertData(convertdata string, inputdata []byte) ([]byte,
 	if err != nil {
 		return inputdata, err
 	}
-	return jsonToByte(resultjson)
+	return iPs.JsonToByte(resultjson)
 }
 
-// convertJSONData is convert using jsonData
-func (jc JSONConvert) convertJSONData(convert interface{}, jsondata *jsonData) (interface{}, error) {
+// convertJSONData is convert using jsondata.JSONData
+func (jc JSONConvert) convertJSONData(convert interface{}, jsondata *iJd.JSONData) (interface{}, error) {
 	switch convertdata := convert.(type) {
 	case map[string]interface{}:
 		for key, val := range convertdata {
@@ -97,7 +100,7 @@ func (jc JSONConvert) convertJSONData(convert interface{}, jsondata *jsonData) (
 			if jc.isNTimeArray(querykey) == true {
 				return jc.getNTimeArrayData(querykey, jsondata)
 			}
-			jsonval, err := jsondata.query(querykey)
+			jsonval, err := jsondata.Query(querykey)
 			if err != nil {
 				return "", err
 			}
@@ -129,7 +132,7 @@ func (jc JSONConvert) isNTimeArray(querykey string) bool {
 }
 
 // getRecordsetData get Recordset data
-func (jc JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *jsonData) (interface{}, error) {
+func (jc JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *iJd.JSONData) (interface{}, error) {
 	resultdata := make([]interface{}, 0)
 	dataset := make([]interface{}, 0)
 	joindataset := make([]interface{}, 0)
@@ -154,7 +157,7 @@ func (jc JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *json
 			delete(convertdataonedata, JOINRECORDSETKEY)
 			delete(convertdataonedata, JOINRECORDCOLUMNKEY)
 			for _, datarecord := range dataset {
-				datarecordparser, err := newJSONData(datarecord)
+				datarecordparser, err := iJd.NewJSONData(datarecord)
 				if err != nil {
 					return nil, err
 				}
@@ -165,7 +168,7 @@ func (jc JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *json
 					case string:
 						if data != JOINRECORDSETKEY && strings.HasPrefix(data, JSONCONVERTKEY) == true {
 							querykey := strings.Replace(data, JSONCONVERTKEY, "", 1)
-							jsonval, err := datarecordparser.query(querykey)
+							jsonval, err := datarecordparser.Query(querykey)
 							if err != nil {
 								//log.Print(err)
 							}
@@ -175,7 +178,7 @@ func (jc JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *json
 							}
 						}
 					case map[string]interface{}:
-						datarecordparser, err := newJSONData(datarecord)
+						datarecordparser, err := iJd.NewJSONData(datarecord)
 						if err != nil {
 							return nil, err
 						}
@@ -203,7 +206,7 @@ func (jc JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *json
 }
 
 // getNTimeArrayData get NTimeArray data
-func (jc JSONConvert) getNTimeArrayData(querykey string, jsondata *jsonData) (interface{}, error) {
+func (jc JSONConvert) getNTimeArrayData(querykey string, jsondata *iJd.JSONData) (interface{}, error) {
 	splitquerylist := make([]string, 0)
 	if strings.HasPrefix(querykey, JSONNTIMESKEY) == true {
 		splitquerylist = strings.Split(querykey, fmt.Sprintf("%s%s", JSONNTIMESKEY, JSONSPLITKEY))
@@ -211,7 +214,7 @@ func (jc JSONConvert) getNTimeArrayData(querykey string, jsondata *jsonData) (in
 	} else {
 		splitquerylist = strings.Split(querykey, fmt.Sprintf("%s%s%s", JSONSPLITKEY, JSONNTIMESKEY, JSONSPLITKEY))
 	}
-	jsonarray, err := jsondata.query(splitquerylist[0])
+	jsonarray, err := jsondata.Query(splitquerylist[0])
 	if err != nil {
 		return nil, err
 	}
@@ -223,11 +226,11 @@ func (jc JSONConvert) getNTimeArrayData(querykey string, jsondata *jsonData) (in
 		}
 	case []interface{}:
 		for _, jsonarrayval := range jsonarraydata {
-			arrayjsonparser, err := newJSONData(jsonarrayval)
+			arrayjsonparser, err := iJd.NewJSONData(jsonarrayval)
 			if err != nil {
 				return nil, err
 			}
-			jsonval, err := arrayjsonparser.query(splitquerylist[1])
+			jsonval, err := arrayjsonparser.Query(splitquerylist[1])
 			if err != nil {
 				return nil, err
 			}
@@ -239,9 +242,9 @@ func (jc JSONConvert) getNTimeArrayData(querykey string, jsondata *jsonData) (in
 }
 
 // getRecordsetWithQueryKey get Recordset with query key
-func (jc JSONConvert) getRecordsetWithQueryKey(querykey string, convertdata map[string]interface{}, jsonparser *jsonData) ([]interface{}, error) {
+func (jc JSONConvert) getRecordsetWithQueryKey(querykey string, convertdata map[string]interface{}, jsonparser *iJd.JSONData) ([]interface{}, error) {
 	if datasetquerykey, ok := convertdata[querykey].(string); ok {
-		jsonval, err := jsonparser.query(datasetquerykey)
+		jsonval, err := jsonparser.Query(datasetquerykey)
 		if err != nil {
 			return nil, err
 		}

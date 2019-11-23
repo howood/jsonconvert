@@ -1,6 +1,7 @@
-package jsonconvert
+package jsondata
 
 import (
+	"github.com/howood/jsonconvert/internal/parser"
 	"reflect"
 	"testing"
 )
@@ -46,12 +47,12 @@ var jsondatatestcheck = `
 `
 
 func Test_JsonData(t *testing.T) {
-	jd, err := newJSONData(josnDataTest)
+	jd, err := NewJSONData(josnDataTest)
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
 
-	title, err := jd.query("glossary.title")
+	title, err := jd.Query("glossary.title")
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
@@ -59,7 +60,7 @@ func Test_JsonData(t *testing.T) {
 		t.Fatalf("failed JsonData: get string")
 	}
 
-	array, err := jd.query("glossary.GlossDiv.GlossList.GlossEntry.GlossDef.GlossSeeAlso")
+	array, err := jd.Query("glossary.GlossDiv.GlossList.GlossEntry.GlossDef.GlossSeeAlso")
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
@@ -68,8 +69,8 @@ func Test_JsonData(t *testing.T) {
 		t.Fatalf("failed JsonData ")
 	}
 
-	json, err := jd.query("glossary.GlossDiv.GlossList.GlossEntry")
-	jsonbyte, err := jsonToByte(json)
+	json, err := jd.Query("glossary.GlossDiv.GlossList.GlossEntry")
+	jsonbyte, err := parser.JsonToByte(json)
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
@@ -78,4 +79,17 @@ func Test_JsonData(t *testing.T) {
 	}
 
 	t.Log("success JsonData")
+}
+
+func checkEqualJsonByte(input1, input2 []byte, t *testing.T) bool {
+	var json1 interface{}
+	var json2 interface{}
+
+	if err := parser.ByteToJsonStruct(input1, &json1); err != nil {
+		t.Fatalf("failed test %#v", err)
+	}
+	if err := parser.ByteToJsonStruct(input2, &json2); err != nil {
+		t.Fatalf("failed test %#v", err)
+	}
+	return reflect.DeepEqual(json1, json2)
 }

@@ -1,39 +1,41 @@
-package jsonconvert
+package jsondata
 
 import (
 	"fmt"
+	"github.com/howood/jsonconvert/internal/parser"
 	"strconv"
 	"strings"
 )
 
-type jsonData struct {
+// JSONData represents JSON data entity
+type JSONData struct {
 	// Data is JSON Data
 	Data interface{}
 }
 
-// newJsonData create jsonData pointer from []byte / string / interface{}
-func newJSONData(inputdata interface{}) (*jsonData, error) {
+// NewJSONData create JSONData pointer from []byte / string / interface{}
+func NewJSONData(inputdata interface{}) (*JSONData, error) {
 	var data = new(interface{})
 	switch converteddata := inputdata.(type) {
 	case []byte:
-		err := byteToJsonStruct(converteddata, data)
+		err := parser.ByteToJsonStruct(converteddata, data)
 		if err != nil {
 			return nil, err
 		}
-		return &jsonData{*data}, nil
+		return &JSONData{*data}, nil
 	case string:
-		err := byteToJsonStruct([]byte(converteddata), data)
+		err := parser.ByteToJsonStruct([]byte(converteddata), data)
 		if err != nil {
 			return nil, err
 		}
-		return &jsonData{*data}, nil
+		return &JSONData{*data}, nil
 	default:
-		return &jsonData{Data: inputdata}, nil
+		return &JSONData{Data: inputdata}, nil
 	}
 }
 
-// query is extract data from JSON with item key
-func (jd *jsonData) query(key string) (interface{}, error) {
+// Query is extract data from JSON with item key
+func (jd *JSONData) Query(key string) (interface{}, error) {
 	if key == "." {
 		return jd.Data, nil
 	}
