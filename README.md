@@ -8,7 +8,9 @@
 
 # jsonconvert
 
-Convert JSON input to Different format.
+Convert JSON data to Different format. 
+- Support Array data
+- Support Join Data
 
 # Install
 
@@ -18,4 +20,4 @@ $ go get -u github.com/howood/jsonconvert
 
 # Usage
 
-See [example](example/)
+See [examples](examples/)
