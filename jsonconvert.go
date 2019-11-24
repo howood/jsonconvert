@@ -38,17 +38,17 @@ func NewJSONConvert() *JSONConvert {
 }
 
 // SetResponseSetting is set convert list response settings
-func (jc JSONConvert) SetResponseSetting(identifier, responseJSONSetting string) {
+func (jc *JSONConvert) SetResponseSetting(identifier, responseJSONSetting string) {
 	jc.convertList[identifier] = responseJSONSetting
 }
 
 // Convert is convert JSON data to other format
-func (jc JSONConvert) Convert(inputdata []byte, identifier string) ([]byte, error) {
+func (jc *JSONConvert) Convert(inputdata []byte, identifier string) ([]byte, error) {
 	return jc.convertData(jc.convertList[identifier], inputdata)
 }
 
 // convertData is convert input data
-func (jc JSONConvert) convertData(convertdata string, inputdata []byte) ([]byte, error) {
+func (jc *JSONConvert) convertData(convertdata string, inputdata []byte) ([]byte, error) {
 	convertdatajson, err := iP.ByteToJson([]byte(convertdata))
 	if err != nil {
 		return nil, err
@@ -65,7 +65,7 @@ func (jc JSONConvert) convertData(convertdata string, inputdata []byte) ([]byte,
 }
 
 // convertJSONData is convert using jsondata.JSONData
-func (jc JSONConvert) convertJSONData(convert interface{}, jsondata *iJd.JSONData) (interface{}, error) {
+func (jc *JSONConvert) convertJSONData(convert interface{}, jsondata *iJd.JSONData) (interface{}, error) {
 	switch convertdata := convert.(type) {
 	case map[string]interface{}:
 		for key, val := range convertdata {
@@ -111,7 +111,7 @@ func (jc JSONConvert) convertJSONData(convert interface{}, jsondata *iJd.JSONDat
 }
 
 // isRecordset is check Recordset data or not
-func (jc JSONConvert) isRecordset(convertdata []interface{}) bool {
+func (jc *JSONConvert) isRecordset(convertdata []interface{}) bool {
 	for _, convertdataone := range convertdata {
 		switch convertdataonedata := convertdataone.(type) {
 		case map[string]interface{}:
@@ -124,7 +124,7 @@ func (jc JSONConvert) isRecordset(convertdata []interface{}) bool {
 }
 
 // isNTimeArray is check NTimeArray data or not
-func (jc JSONConvert) isNTimeArray(querykey string) bool {
+func (jc *JSONConvert) isNTimeArray(querykey string) bool {
 	if strings.Contains(querykey, JSONNTIMESKEY) == true {
 		return true
 	}
@@ -132,7 +132,7 @@ func (jc JSONConvert) isNTimeArray(querykey string) bool {
 }
 
 // getRecordsetData get Recordset data
-func (jc JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *iJd.JSONData) (interface{}, error) {
+func (jc *JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *iJd.JSONData) (interface{}, error) {
 	resultdata := make([]interface{}, 0)
 	dataset := make([]interface{}, 0)
 	joindataset := make([]interface{}, 0)
@@ -206,7 +206,7 @@ func (jc JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *iJd.
 }
 
 // getNTimeArrayData get NTimeArray data
-func (jc JSONConvert) getNTimeArrayData(querykey string, jsondata *iJd.JSONData) (interface{}, error) {
+func (jc *JSONConvert) getNTimeArrayData(querykey string, jsondata *iJd.JSONData) (interface{}, error) {
 	splitquerylist := make([]string, 0)
 	if strings.HasPrefix(querykey, JSONNTIMESKEY) == true {
 		splitquerylist = strings.Split(querykey, fmt.Sprintf("%s%s", JSONNTIMESKEY, JSONSPLITKEY))
@@ -242,7 +242,7 @@ func (jc JSONConvert) getNTimeArrayData(querykey string, jsondata *iJd.JSONData)
 }
 
 // getRecordsetWithQueryKey get Recordset with query key
-func (jc JSONConvert) getRecordsetWithQueryKey(querykey string, convertdata map[string]interface{}, jsonparser *iJd.JSONData) ([]interface{}, error) {
+func (jc *JSONConvert) getRecordsetWithQueryKey(querykey string, convertdata map[string]interface{}, jsonparser *iJd.JSONData) ([]interface{}, error) {
 	if datasetquerykey, ok := convertdata[querykey].(string); ok {
 		jsonval, err := jsonparser.Query(datasetquerykey)
 		if err != nil {
@@ -259,7 +259,7 @@ func (jc JSONConvert) getRecordsetWithQueryKey(querykey string, convertdata map[
 }
 
 // getDataFromJoinRecordset get data from JoinRecordset
-func (jc JSONConvert) getDataFromJoinRecordset(joincolumn string, joincolumnvalue interface{}, joindata []interface{}) interface{} {
+func (jc *JSONConvert) getDataFromJoinRecordset(joincolumn string, joincolumnvalue interface{}, joindata []interface{}) interface{} {
 	for _, joindataone := range joindata {
 		switch joindataonedata := joindataone.(type) {
 		case map[string]interface{}:
