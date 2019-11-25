@@ -133,9 +133,7 @@ func (jc *JSONConvert) isNTimeArray(querykey string) bool {
 
 // getRecordsetData get Recordset data
 func (jc *JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *iJd.JSONData) (interface{}, error) {
-	resultdata := make([]interface{}, 0)
-	var dataset []interface{}
-	var joindataset []interface{}
+	var resultdata, dataset, joindataset []interface{}
 	var joincolumn string
 	for _, convertdataone := range convertdata {
 		var err error
@@ -144,9 +142,7 @@ func (jc *JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *iJd
 			if dataset, err = jc.getRecordsetWithQueryKey(RECORDSETKEY, convertdataonedata, jsondata); err != nil {
 				return nil, err
 			}
-			if joindataset, err = jc.getRecordsetWithQueryKey(JOINRECORDSETKEY, convertdataonedata, jsondata); err != nil {
-				//log.Print(err)
-			}
+			joindataset, _ = jc.getRecordsetWithQueryKey(JOINRECORDSETKEY, convertdataonedata, jsondata)
 			if len(joindataset) > 0 {
 				var ok bool
 				if joincolumn, ok = convertdataonedata[JOINRECORDCOLUMNKEY].(string); ok == false {
@@ -168,13 +164,11 @@ func (jc *JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *iJd
 					case string:
 						if data != JOINRECORDSETKEY && strings.HasPrefix(data, JSONCONVERTKEY) == true {
 							querykey := strings.Replace(data, JSONCONVERTKEY, "", 1)
-							jsonval, err := datarecordparser.Query(querykey)
-							if err != nil {
-								//log.Print(err)
-							}
-							resultjsonmap[key] = jsonval
-							if querykey == joincolumn {
-								joincolumnvalue = jsonval
+							if jsonval, err := datarecordparser.Query(querykey); err == nil {
+								resultjsonmap[key] = jsonval
+								if querykey == joincolumn {
+									joincolumnvalue = jsonval
+								}
 							}
 						}
 					case map[string]interface{}:
