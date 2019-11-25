@@ -30,6 +30,28 @@ var josnDataTest = `
 	}
 }
 `
+var josnDataTestInner = `
+{
+	"title": "example glossary",
+	"GlossDiv": {
+		"title": "S",
+		"GlossList": {
+			"GlossEntry": {
+				"ID": "SGML",
+				"SortAs": "SGML",
+				"GlossTerm": "Standard Generalized Markup Language",
+				"Acronym": "SGML",
+				"Abbrev": "ISO 8879:1986",
+				"GlossDef": {
+					"para": "A meta-markup language, used to create markup languages such as DocBook.",
+					"GlossSeeAlso": ["GML", "XML"]
+				},
+				"GlossSee": "markup"
+			}
+		}
+	}
+}
+`
 
 var jsondatatestcheck = `
 {
@@ -77,6 +99,18 @@ func Test_JsonData(t *testing.T) {
 		t.Logf("failed test %#v", err)
 	}
 
+	josndata2, err := jd.Query("glossary")
+	if err != nil {
+		t.Fatalf("failed test %#v", err)
+	}
+	var checkalldata2 interface{}
+	if err := parser.ByteToJSONStruct([]byte(josnDataTestInner), &checkalldata2); err != nil {
+		t.Fatalf("failed test %#v", err)
+	}
+	if reflect.DeepEqual(checkalldata2, josndata2) == false {
+		t.Fatalf("failed JsonData: getall")
+	}
+
 	title, err := jd.Query("glossary.title")
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
@@ -116,7 +150,7 @@ func Test_JsonData(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
-	if checkEqualJsonByte(jsonbyte, []byte(jsondatatestcheck), t) == false {
+	if checkEqualJSONByte(jsonbyte, []byte(jsondatatestcheck), t) == false {
 		t.Fatalf("failed JsonConvert ")
 	}
 
@@ -129,7 +163,7 @@ func Test_JsonData(t *testing.T) {
 	t.Log("success JsonData")
 }
 
-func checkEqualJsonByte(input1, input2 []byte, t *testing.T) bool {
+func checkEqualJSONByte(input1, input2 []byte, t *testing.T) bool {
 	var json1 interface{}
 	var json2 interface{}
 
