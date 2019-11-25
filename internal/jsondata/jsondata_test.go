@@ -65,6 +65,12 @@ func Test_JsonData(t *testing.T) {
 		t.Fatalf("failed JsonData: getall")
 	}
 
+	if _, err := jd.Query("sssss"); err == nil {
+		t.Fatal("failed test no error")
+	} else {
+		t.Logf("failed test %#v", err)
+	}
+
 	title, err := jd.Query("glossary.title")
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
