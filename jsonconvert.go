@@ -49,7 +49,7 @@ func (jc *JSONConvert) Convert(inputdata []byte, identifier string) ([]byte, err
 
 // convertData is convert input data
 func (jc *JSONConvert) convertData(convertdata string, inputdata []byte) ([]byte, error) {
-	convertdatajson, err := iP.ByteToJson([]byte(convertdata))
+	convertdatajson, err := iP.ByteToJSON([]byte(convertdata))
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func (jc *JSONConvert) convertData(convertdata string, inputdata []byte) ([]byte
 	if err != nil {
 		return inputdata, err
 	}
-	return iP.JsonToByte(resultjson)
+	return iP.JSONToByte(resultjson)
 }
 
 // convertJSONData is convert using jsondata.JSONData
@@ -134,10 +134,10 @@ func (jc *JSONConvert) isNTimeArray(querykey string) bool {
 // getRecordsetData get Recordset data
 func (jc *JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *iJd.JSONData) (interface{}, error) {
 	resultdata := make([]interface{}, 0)
-	dataset := make([]interface{}, 0)
-	joindataset := make([]interface{}, 0)
 	var joincolumn string
 	for _, convertdataone := range convertdata {
+		dataset := make([]interface{}, 0)
+		joindataset := make([]interface{}, 0)
 		var err error
 		switch convertdataonedata := convertdataone.(type) {
 		case map[string]interface{}:

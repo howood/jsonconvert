@@ -3,25 +3,25 @@ package parser
 import "encoding/json"
 
 const (
-	// MARSHAL_PREFIX is prefix for indented line beginning with
-	MARSHAL_PREFIX = ""
-	// MARSHAL_PREFIX is indented according to the indentation nesting
-	MARSHAL_INDENT = "    "
+	// marshalPrefix is prefix for indented line beginning with
+	marshalPrefix = ""
+	// marshalPrefix is indented according to the indentation nesting
+	marshalIndent = "    "
 )
 
-// jsonToByte is convert json struct to bytes
-func JsonToByte(jsondata interface{}) ([]byte, error) {
-	return json.MarshalIndent(jsondata, MARSHAL_PREFIX, MARSHAL_INDENT)
+// JSONToByte is convert json struct to bytes
+func JSONToByte(jsondata interface{}) ([]byte, error) {
+	return json.MarshalIndent(jsondata, marshalPrefix, marshalIndent)
 }
 
-// byteToJson is convert bytes to json interface{}
-func ByteToJson(jsonbyte []byte) (interface{}, error) {
+// ByteToJSON is convert bytes to json interface{}
+func ByteToJSON(jsonbyte []byte) (interface{}, error) {
 	var jsondata interface{}
 	err := json.Unmarshal(jsonbyte, &jsondata)
 	return jsondata, err
 }
 
-// byteToJson is convert bytes to struct
-func ByteToJsonStruct(jsonbyte []byte, jsonobj interface{}) error {
+// ByteToJSONStruct is convert bytes to struct
+func ByteToJSONStruct(jsonbyte []byte, jsonobj interface{}) error {
 	return json.Unmarshal(jsonbyte, &jsonobj)
 }

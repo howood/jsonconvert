@@ -18,13 +18,13 @@ func NewJSONData(inputdata interface{}) (*JSONData, error) {
 	var data = new(interface{})
 	switch converteddata := inputdata.(type) {
 	case []byte:
-		err := parser.ByteToJsonStruct(converteddata, data)
+		err := parser.ByteToJSONStruct(converteddata, data)
 		if err != nil {
 			return nil, err
 		}
 		return &JSONData{*data}, nil
 	case string:
-		err := parser.ByteToJsonStruct([]byte(converteddata), data)
+		err := parser.ByteToJSONStruct([]byte(converteddata), data)
 		if err != nil {
 			return nil, err
 		}
