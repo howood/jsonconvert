@@ -47,6 +47,7 @@ var jsondatatestcheck = `
 `
 
 func Test_JsonData(t *testing.T) {
+	var err error
 	jd, err := NewJSONData(josnDataTest)
 	if err != nil {
 		t.Fatalf("failed test %#v", err)

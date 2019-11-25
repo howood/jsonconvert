@@ -134,10 +134,10 @@ func (jc *JSONConvert) isNTimeArray(querykey string) bool {
 // getRecordsetData get Recordset data
 func (jc *JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *iJd.JSONData) (interface{}, error) {
 	resultdata := make([]interface{}, 0)
+	var dataset []interface{}
+	var joindataset []interface{}
 	var joincolumn string
 	for _, convertdataone := range convertdata {
-		dataset := make([]interface{}, 0)
-		joindataset := make([]interface{}, 0)
 		var err error
 		switch convertdataonedata := convertdataone.(type) {
 		case map[string]interface{}:
@@ -207,7 +207,7 @@ func (jc *JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *iJd
 
 // getNTimeArrayData get NTimeArray data
 func (jc *JSONConvert) getNTimeArrayData(querykey string, jsondata *iJd.JSONData) (interface{}, error) {
-	splitquerylist := make([]string, 0)
+	var splitquerylist []string
 	if strings.HasPrefix(querykey, JSONNTIMESKEY) == true {
 		splitquerylist = strings.Split(querykey, fmt.Sprintf("%s%s", JSONNTIMESKEY, JSONSPLITKEY))
 		splitquerylist[0] = JSONSPLITKEY
