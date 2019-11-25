@@ -53,6 +53,18 @@ func Test_JsonData(t *testing.T) {
 		t.Fatalf("failed test %#v", err)
 	}
 
+	jsondata, err := jd.Query(".")
+	if err != nil {
+		t.Fatalf("failed test %#v", err)
+	}
+	var checkalldata interface{}
+	if err := parser.ByteToJSONStruct([]byte(josnDataTest), &checkalldata); err != nil {
+		t.Fatalf("failed test %#v", err)
+	}
+	if reflect.DeepEqual(checkalldata, jsondata) == false {
+		t.Fatalf("failed JsonData: getall")
+	}
+
 	title, err := jd.Query("glossary.title")
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
