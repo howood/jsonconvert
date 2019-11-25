@@ -70,6 +70,20 @@ func Test_JsonData(t *testing.T) {
 		t.Fatalf("failed JsonData ")
 	}
 
+	arraydata, err := jd.Query("glossary.GlossDiv.GlossList.GlossEntry.GlossDef.GlossSeeAlso.[0]")
+	if err != nil {
+		t.Fatalf("failed test %#v", err)
+	}
+	if arraydata != "GML" {
+		t.Fatalf("failed JsonData ")
+	}
+
+	if _, err := jd.Query("glossary.GlossDiv.GlossList.GlossEntry.GlossDef.GlossSeeAlso.[2]"); err == nil {
+		t.Fatal("failed test no error")
+	} else {
+		t.Logf("failed test %#v", err)
+	}
+
 	json, err := jd.Query("glossary.GlossDiv.GlossList.GlossEntry")
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
@@ -80,6 +94,12 @@ func Test_JsonData(t *testing.T) {
 	}
 	if checkEqualJsonByte(jsonbyte, []byte(jsondatatestcheck), t) == false {
 		t.Fatalf("failed JsonConvert ")
+	}
+
+	if _, err := jd.Query("glossary.GlossDiv.GlossList.GlossEntry2"); err == nil {
+		t.Fatal("failed test no error")
+	} else {
+		t.Logf("failed test %#v", err)
 	}
 
 	t.Log("success JsonData")
