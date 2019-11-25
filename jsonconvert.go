@@ -164,11 +164,10 @@ func (jc *JSONConvert) getRecordsetData(convertdata []interface{}, jsondata *iJd
 					case string:
 						if data != JOINRECORDSETKEY && strings.HasPrefix(data, JSONCONVERTKEY) == true {
 							querykey := strings.Replace(data, JSONCONVERTKEY, "", 1)
-							if jsonval, err := datarecordparser.Query(querykey); err == nil {
-								resultjsonmap[key] = jsonval
-								if querykey == joincolumn {
-									joincolumnvalue = jsonval
-								}
+							jsonval, _ := datarecordparser.Query(querykey)
+							resultjsonmap[key] = jsonval
+							if querykey == joincolumn {
+								joincolumnvalue = jsonval
 							}
 						}
 					case map[string]interface{}:
