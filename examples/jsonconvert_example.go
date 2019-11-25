@@ -12,7 +12,7 @@ const (
 )
 
 var responseTestData = map[string]map[string]string{
-	"test1": map[string]string{
+	"test1": {
 		responseSetting: `
 {
 	"GlossEntry": "$$glossary.GlossDiv.GlossList.GlossEntry",
@@ -46,7 +46,7 @@ var responseTestData = map[string]map[string]string{
 	}
 }`,
 	},
-	"test2": map[string]string{
+	"test2": {
 		responseSetting: `
 {
 	"billToaddress": ["$$[$$n].billTo.address"],
@@ -116,7 +116,7 @@ var responseTestData = map[string]map[string]string{
 ]
 `,
 	},
-	"test3": map[string]string{
+	"test3": {
 		responseSetting: `
 [
 	{
@@ -180,7 +180,7 @@ var responseTestData = map[string]map[string]string{
 }
 `,
 	},
-	"test4": map[string]string{
+	"test4": {
 		responseSetting: `
 {
 	"user": [
@@ -246,7 +246,7 @@ var responseTestData = map[string]map[string]string{
 }
 `,
 	},
-	"test5": map[string]string{
+	"test5": {
 		responseSetting: `
 [
 	{

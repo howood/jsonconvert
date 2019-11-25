@@ -7,7 +7,7 @@ import (
 )
 
 var responseTestData = map[string]map[string]string{
-	"test1": map[string]string{
+	"test1": {
 		"setting": `
 {
 	"GlossEntry": "$$glossary.GlossDiv.GlossList.GlossEntry",
@@ -15,7 +15,7 @@ var responseTestData = map[string]map[string]string{
 	"GlossDef": "$$glossary.GlossDiv.GlossList.GlossEntry.GlossDef",
 	"title":  "$$glossary.title",
 	 "key": "value"
-  }
+}
 `,
 		"input": `
 {
@@ -65,7 +65,7 @@ var responseTestData = map[string]map[string]string{
   }
 `,
 	},
-	"test2": map[string]string{
+	"test2": {
 		"setting": `
 {
 	"billToaddress": ["$$[$$n].billTo.address"],
@@ -150,7 +150,7 @@ var responseTestData = map[string]map[string]string{
 }
 `,
 	},
-	"test3": map[string]string{
+	"test3": {
 		"setting": `
 [
 	{
@@ -257,7 +257,7 @@ var responseTestData = map[string]map[string]string{
 ]
 `,
 	},
-	"test4": map[string]string{
+	"test4": {
 		"setting": `
 {
 	"user": [
@@ -368,7 +368,7 @@ var responseTestData = map[string]map[string]string{
 }
 `,
 	},
-	"test5": map[string]string{
+	"test5": {
 		"setting": `
 [
 	{
