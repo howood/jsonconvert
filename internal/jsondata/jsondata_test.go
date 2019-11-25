@@ -70,7 +70,7 @@ func Test_JsonData(t *testing.T) {
 	}
 
 	json, err := jd.Query("glossary.GlossDiv.GlossList.GlossEntry")
-	jsonbyte, err := parser.JsonToByte(json)
+	jsonbyte, err := parser.JSONToByte(json)
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
@@ -85,10 +85,10 @@ func checkEqualJsonByte(input1, input2 []byte, t *testing.T) bool {
 	var json1 interface{}
 	var json2 interface{}
 
-	if err := parser.ByteToJsonStruct(input1, &json1); err != nil {
+	if err := parser.ByteToJSONStruct(input1, &json1); err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
-	if err := parser.ByteToJsonStruct(input2, &json2); err != nil {
+	if err := parser.ByteToJSONStruct(input2, &json2); err != nil {
 		t.Fatalf("failed test %#v", err)
 	}
 	return reflect.DeepEqual(json1, json2)

@@ -7,13 +7,13 @@ import (
 )
 
 const (
-	RESPONSE_SETTING = "setting"
-	RESPONSE_INPUT   = "input"
+	responseSetting = "setting"
+	responseInput   = "input"
 )
 
 var responseTestData = map[string]map[string]string{
 	"test1": map[string]string{
-		RESPONSE_SETTING: `
+		responseSetting: `
 {
 	"GlossEntry": "$$glossary.GlossDiv.GlossList.GlossEntry",
 	"GlossSeeAlso": "$$glossary.GlossDiv.GlossList.GlossEntry.GlossDef.GlossSeeAlso",
@@ -22,7 +22,7 @@ var responseTestData = map[string]map[string]string{
 	 "key": "value"
   }
 `,
-		RESPONSE_INPUT: `
+		responseInput: `
 {
 	"glossary": {
 		"title": "example glossary",
@@ -47,14 +47,14 @@ var responseTestData = map[string]map[string]string{
 }`,
 	},
 	"test2": map[string]string{
-		RESPONSE_SETTING: `
+		responseSetting: `
 {
 	"billToaddress": ["$$[$$n].billTo.address"],
 	"sku": ["$$[$$n].sku"],
 	"key": "value"
 }
 `,
-		RESPONSE_INPUT: `
+		responseInput: `
 [
 	{
 		"billTo": {
@@ -117,7 +117,7 @@ var responseTestData = map[string]map[string]string{
 `,
 	},
 	"test3": map[string]string{
-		RESPONSE_SETTING: `
+		responseSetting: `
 [
 	{
 		"$$recordset": "userdata",
@@ -133,7 +133,7 @@ var responseTestData = map[string]map[string]string{
 	}
 ]
 `,
-		RESPONSE_INPUT: `
+		responseInput: `
 {
 	"userdata":
 	[
@@ -181,7 +181,7 @@ var responseTestData = map[string]map[string]string{
 `,
 	},
 	"test4": map[string]string{
-		RESPONSE_SETTING: `
+		responseSetting: `
 {
 	"user": [
 		{
@@ -199,7 +199,7 @@ var responseTestData = map[string]map[string]string{
 	]
 }
 `,
-		RESPONSE_INPUT: `
+		responseInput: `
 {
 	"userdata":
 	[
@@ -247,7 +247,7 @@ var responseTestData = map[string]map[string]string{
 `,
 	},
 	"test5": map[string]string{
-		RESPONSE_SETTING: `
+		responseSetting: `
 [
 	{
 		"$$recordset": "userdata",
@@ -256,7 +256,7 @@ var responseTestData = map[string]map[string]string{
 	}
 ]
 `,
-		RESPONSE_INPUT: `
+		responseInput: `
 {
 	"userdata":
 	[
@@ -308,10 +308,10 @@ var responseTestData = map[string]map[string]string{
 func main() {
 	jc := jsonconvert.NewJSONConvert()
 	for k, v := range responseTestData {
-		jc.SetResponseSetting(k, v[RESPONSE_SETTING])
+		jc.SetResponseSetting(k, v[responseSetting])
 	}
 	for k, v := range responseTestData {
-		resultbyte, err := jc.Convert([]byte(v[RESPONSE_INPUT]), k)
+		resultbyte, err := jc.Convert([]byte(v[responseInput]), k)
 		if err != nil {
 			log.Fatalf("failed  :%s %#v", k, err)
 		}
