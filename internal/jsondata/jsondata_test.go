@@ -71,6 +71,9 @@ func Test_JsonData(t *testing.T) {
 	}
 
 	json, err := jd.Query("glossary.GlossDiv.GlossList.GlossEntry")
+	if err != nil {
+		t.Fatalf("failed test %#v", err)
+	}
 	jsonbyte, err := parser.JSONToByte(json)
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
