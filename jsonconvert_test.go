@@ -6,9 +6,17 @@ import (
 	"testing"
 )
 
-var responseTestData = map[string]map[string]string{
-	"test1": {
-		"setting": `
+type testData struct {
+	Setting      string
+	Input        string
+	CheckData    string
+	ResultHasErr bool
+}
+
+var responseTestData = map[string]testData{
+	"test1": testData{
+		ResultHasErr: false,
+		Setting: `
 {
 	"GlossEntry": "$$glossary.GlossDiv.GlossList.GlossEntry",
 	"GlossSeeAlso": "$$glossary.GlossDiv.GlossList.GlossEntry.GlossDef.GlossSeeAlso",
@@ -17,7 +25,7 @@ var responseTestData = map[string]map[string]string{
 	 "key": "value"
 }
 `,
-		"input": `
+		Input: `
 {
 	"glossary": {
 		"title": "example glossary",
@@ -41,7 +49,7 @@ var responseTestData = map[string]map[string]string{
 	}
 }`,
 
-		"checkdata": `
+		CheckData: `
 {
 	"GlossEntry": {
 		"ID": "SGML",
@@ -65,15 +73,16 @@ var responseTestData = map[string]map[string]string{
   }
 `,
 	},
-	"test2": {
-		"setting": `
+	"test2": testData{
+		ResultHasErr: false,
+		Setting: `
 {
 	"billToaddress": ["$$[$$n].billTo.address"],
 	"sku": ["$$[$$n].sku"],
 	"key": "value"
 }
 `,
-		"input": `
+		Input: `
 [
 	{
 		"billTo": {
@@ -134,7 +143,7 @@ var responseTestData = map[string]map[string]string{
 	}
 ]
 `,
-		"checkdata": `
+		CheckData: `
 {
 	"billToaddress": [
 		"456 Oak Lanewwwww",
@@ -150,8 +159,9 @@ var responseTestData = map[string]map[string]string{
 }
 `,
 	},
-	"test3": {
-		"setting": `
+	"test3": testData{
+		ResultHasErr: false,
+		Setting: `
 [
 	{
 		"$$recordset": "userdata",
@@ -167,7 +177,7 @@ var responseTestData = map[string]map[string]string{
 	}
 ]
 `,
-		"input": `
+		Input: `
 {
 	"userdata":
 	[
@@ -213,7 +223,7 @@ var responseTestData = map[string]map[string]string{
 	]
 }
 `,
-		"checkdata": `
+		CheckData: `
 [
 	{
 		"address": {
@@ -257,8 +267,9 @@ var responseTestData = map[string]map[string]string{
 ]
 `,
 	},
-	"test4": {
-		"setting": `
+	"test4": testData{
+		ResultHasErr: false,
+		Setting: `
 {
 	"user": [
 		{
@@ -276,7 +287,7 @@ var responseTestData = map[string]map[string]string{
 	]
 }
 `,
-		"input": `
+		Input: `
 {
 	"userdata":
 	[
@@ -322,7 +333,7 @@ var responseTestData = map[string]map[string]string{
 	]
 }
 `,
-		"checkdata": `
+		CheckData: `
 {
 	"user": [
 		{
@@ -368,8 +379,9 @@ var responseTestData = map[string]map[string]string{
 }
 `,
 	},
-	"test5": {
-		"setting": `
+	"test5": testData{
+		ResultHasErr: false,
+		Setting: `
 [
 	{
 		"$$recordset": "userdata",
@@ -378,7 +390,7 @@ var responseTestData = map[string]map[string]string{
 	}
 ]
 `,
-		"input": `
+		Input: `
 {
 	"userdata":
 	[
@@ -424,7 +436,7 @@ var responseTestData = map[string]map[string]string{
 	]
 }
 `,
-		"checkdata": `
+		CheckData: `
 [
 	{
 		"name": "aaa",
@@ -441,21 +453,218 @@ var responseTestData = map[string]map[string]string{
 ]
 `,
 	},
+	"test6": testData{
+		ResultHasErr: true,
+		Setting:      "wwwww",
+		Input:        "wwwww",
+		CheckData:    "wwwww",
+	},
+	"test7": testData{
+		ResultHasErr: true,
+		Setting:      `{"aaa":7}`,
+		Input:        "wwwww",
+		CheckData:    "wwwww",
+	},
+	"test8": testData{
+		ResultHasErr: true,
+		Setting:      `{"data": "$$aaa.vvv"}`,
+		Input:        `{"aaa":7}`,
+		CheckData:    `{"aaa":7}`,
+	},
+	"test9": testData{
+		ResultHasErr: true,
+		Setting:      `[{"data": "$$aaa.vvv"}]`,
+		Input:        `{"aaa":7}`,
+		CheckData:    `{"aaa":7}`,
+	},
+	"test10": testData{
+		ResultHasErr: false,
+		Setting:      `[{"data": "$$aaa"}]`,
+		Input:        `{"aaa":7}`,
+		CheckData:    `[{"data":7}]`,
+	},
+	"test11": testData{
+		ResultHasErr: true,
+		Setting: `{"user": [
+		{
+			"$$recordset": "userdata",
+			"$$joinrecordset": "orderdata",
+			"$$joinrecordcolumn": "userid"
+		}
+		]
+}`,
+		Input: `{"data": {"aaa":7}}`,
+		CheckData: `{
+            "user": [
+                {}
+            ]
+        }`,
+	},
+	"test12": testData{
+		ResultHasErr: false,
+		Setting: `{"user": [
+		{
+			"$$recordset": "userdata",
+			"$$joinrecordset": "orderdata",
+			"$$joinrecordcolumn": "userid"
+		}
+		]
+}`,
+		Input: `{"userdata": {"aaa":7}}`,
+		CheckData: `{
+            "user": [
+                {}
+            ]
+        }`,
+	},
+	"test13": testData{
+		ResultHasErr: false,
+		Setting: `{"user": [
+		{
+			"$$recordset": "userdata",
+			"$$joinrecordset": "orderdata",
+			"$$joinrecordcolumn": "userid"
+		}
+		]
+}`,
+		Input: `{"userdata": {"aaa":7}, "orderdata":{"aaa":7}}`,
+		CheckData: `{
+            "user": [
+                {}
+            ]
+        }`,
+	},
+	"test14": testData{
+		ResultHasErr: true,
+		Setting: `{"user": [
+		{
+			"$$recordset": "userdata",
+			"$$joinrecordset": "orderdata"
+		}
+		]
+}`,
+		Input: `{"userdata": {"aaa":7}, "orderdata":{"aaa":7}}`,
+		CheckData: `{
+            "user": [
+                {}
+            ]
+        }`,
+	},
+	"test15": testData{
+		ResultHasErr: false,
+		Setting: `{"user": [
+		{
+			"$$recordset": "userdata",
+			"$$joinrecordset": "orderdata",
+			"$$joinrecordcolumn": "userid"
+		}
+		]
+}`,
+		Input: `{"userdata": {"aaa":7}, "orderdata":{}}`,
+		CheckData: `{
+            "user": [
+                {}
+            ]
+        }`,
+	},
+	"test16": testData{
+		ResultHasErr: false,
+		Setting: `{
+			"billToaddress": ["$$ccc.[$$n].billTo"]
+		}
+		`,
+		Input: `{"ccc": [{"billTo":8},{"billTo":9}]}`,
+		CheckData: `{
+            "billToaddress": [
+                8,
+                9
+            ]
+        }`,
+	},
+	"test17": testData{
+		ResultHasErr: true,
+		Setting: `{
+			"billToaddress": ["$$ccc2.[$$n].billTo"]
+		}
+		`,
+		Input: `{"ccc": [{"billTo":8},{"billTo":9}]}`,
+		CheckData: `{
+            "billToaddress": [
+                8,
+                9
+            ]
+        }`,
+	},
+	"test18": testData{
+		ResultHasErr: true,
+		Setting: `{
+			"billToaddress": ["$$ccc.[$$n].billTo2"]
+		}
+		`,
+		Input: `{"ccc": [{"billTo":8},{"billTo":9}]}`,
+		CheckData: `{
+            "billToaddress": [
+                8,
+                9
+            ]
+        }`,
+	},
+	"test19": testData{
+		ResultHasErr: false,
+		Setting: `{
+			"billToaddress": ["$$ccc.[$$n].billTo"]
+		}
+		`,
+		Input: `{"ccc": {"billTo":8}}`,
+		CheckData: `{
+            "billToaddress": [
+                8
+            ]
+        }`,
+	},
+	"test20": testData{
+		ResultHasErr: true,
+		Setting: `{
+			"billToaddress": ["$$ccc.[$$n].billTo"]
+		}
+		`,
+		Input:     `{"ccc": ""}`,
+		CheckData: ``,
+	},
+	"test21": testData{
+		ResultHasErr: false,
+		Setting: `{"user": [
+		{
+			"$$recordset": "userdata",
+			"$$joinrecordset": "orderdata",
+			"$$joinrecordcolumn": "userid"
+		}
+		]
+}`,
+		Input: `{"userdata": {"userid":8}, "orderdata":{"userid": [8,9], "ssss": [4,5,7]}}`,
+		CheckData: `{
+            "user": [
+                {}
+            ]
+        }`,
+	},
 }
 
 func Test_JsonConvertTest1(t *testing.T) {
 	jc := NewJSONConvert()
 	for k, v := range responseTestData {
-		jc.SetResponseSetting(k, v["setting"])
+		jc.SetResponseSetting(k, v.Setting)
 	}
 	for k, v := range responseTestData {
-		resultbyte, err := jc.Convert([]byte(v["input"]), k)
-		if err != nil {
+		resultbyte, err := jc.Convert([]byte(v.Input), k)
+		if (err != nil) != v.ResultHasErr {
 			t.Fatalf("failed test :%s %#v", k, err)
+		} else {
+			t.Logf("failed test :%s %#v", k, err)
 		}
-		if checkEqualJSONByte(resultbyte, []byte(v["checkdata"]), t) == false {
+		if v.ResultHasErr == false && checkEqualJSONByte(resultbyte, []byte(v.CheckData), t) == false {
 			t.Log(string(resultbyte))
-			t.Log(v["checkdata"])
+			t.Log(v.CheckData)
 			t.Fatalf("failed JsonConvert :%s", k)
 		}
 		t.Logf("success : %s", k)
