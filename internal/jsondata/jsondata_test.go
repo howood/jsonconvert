@@ -160,6 +160,12 @@ func Test_JsonData(t *testing.T) {
 		t.Logf("failed test %#v", err)
 	}
 
+	if _, err := jd.Query("glossary.GlossDiv.GlossList.GlossEntry.GlossDef.GlossSeeAlso.ssss"); err == nil {
+		t.Fatal("failed test no error")
+	} else {
+		t.Logf("failed test %#v", err)
+	}
+
 	if _, err := jd.Query("glossary.GlossDiv.GlossList.GlossEntry.GlossDef.[1]"); err == nil {
 		t.Fatal("failed test no error")
 	} else {
