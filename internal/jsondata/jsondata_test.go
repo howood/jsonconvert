@@ -70,6 +70,18 @@ var jsondatatestcheck = `
 
 func Test_JsonData(t *testing.T) {
 	var err error
+	if _, err := NewJSONData(""); err == nil {
+		t.Fatal("failed test string", err)
+	} else {
+		t.Logf("failed test %#v", err)
+	}
+
+	if _, err := NewJSONData([]byte("s")); err == nil {
+		t.Fatal("failed test bytes", err)
+	} else {
+		t.Logf("failed test %#v", err)
+	}
+
 	jd, err := NewJSONData(josnDataTest)
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
@@ -142,6 +154,18 @@ func Test_JsonData(t *testing.T) {
 		t.Logf("failed test %#v", err)
 	}
 
+	if _, err := jd.Query("glossary.GlossDiv.GlossList.GlossEntry.GlossDef.GlossSeeAlso.[aaa]"); err == nil {
+		t.Fatal("failed test no error")
+	} else {
+		t.Logf("failed test %#v", err)
+	}
+
+	if _, err := jd.Query("glossary.GlossDiv.GlossList.GlossEntry.GlossDef.[1]"); err == nil {
+		t.Fatal("failed test no error")
+	} else {
+		t.Logf("failed test %#v", err)
+	}
+
 	json, err := jd.Query("glossary.GlossDiv.GlossList.GlossEntry")
 	if err != nil {
 		t.Fatalf("failed test %#v", err)
@@ -158,6 +182,18 @@ func Test_JsonData(t *testing.T) {
 		t.Fatal("failed test no error")
 	} else {
 		t.Logf("failed test %#v", err)
+	}
+
+	if _, err := NewJSONData([]byte(josnDataTest)); err != nil {
+		t.Fatalf("failed test %#v", err)
+	}
+
+	jsonmap := map[string]interface{}{
+		"aaa": "aa",
+		"bbb": "bb",
+	}
+	if _, err := NewJSONData(jsonmap); err != nil {
+		t.Fatalf("failed test %#v", err)
 	}
 
 	t.Log("success JsonData")
