@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/howood/jsonconvert.svg?branch=master)](https://travis-ci.org/howood/jsonconvert)
 [![GitHub release](http://img.shields.io/github/release/howood/jsonconvert.svg?style=flat-square)][release]
 [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=flat-square)](https://pkg.go.dev/github.com/howood/jsonconvert)
+[![Build Status](https://github.com/howood/jsonconvert/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/howood/jsonconvert/actions)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/a522fa479bafb44a83b2/test_coverage)](https://codeclimate.com/github/howood/jsonconvert/test_coverage)
 [![Go Report Card](https://goreportcard.com/badge/github.com/howood/jsonconvert)](https://goreportcard.com/report/github.com/howood/jsonconvert)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)][license]
